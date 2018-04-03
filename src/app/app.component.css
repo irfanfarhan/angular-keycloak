@@ -1,0 +1,108 @@
+.header {
+    background-color: #6bb756;
+    color: #fff;
+    border: none;
+    background: linear-gradient(to right, rgba(107, 183, 86, 0.95), rgba(0, 143, 104, 0.95));
+    height: 3.75rem;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.header .navbar-brand {
+    color: #fff !important;
+    text-transform: capitalize;
+    line-height: 23px;
+    font-size: 16px;
+}
+
+.header .navbar-brand img {
+    position: relative;
+    margin-top: -21px;
+    margin-right: 20px;
+    top: 12px;
+    height: 40px;
+}
+
+.header .navbar-brand i.fa-2x {
+    font-size: 20px !important;
+}
+
+.header .nav-menu-list-left li a {
+    color: #fff !important;
+    text-transform: capitalize;
+    line-height: 20px;
+    font-size: 14px;
+}
+
+.header .nav-menu-list-left li a i.fa-2x {
+    font-size: 20px !important;
+}
+
+.header .nav-menu-list-left li a:hover,
+.header .nav-menu-list-left li a:focus,
+.header .nav-menu-list-left li a .active {
+    color: rgba(255, 255, 255, 0.7) !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.header .nav-menu-list-left li.active a {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.header .nav-menu-list-right li a {
+    color: #fff !important;
+    text-transform: capitalize;
+    line-height: 17px;
+    font-size: 14px;
+}
+
+.header .nav-menu-list-right li a i.fa-2x {
+    font-size: 20px !important;
+}
+
+.header .nav-menu-list-right li a:hover {
+    color: #fae042 !important;
+}
+
+.header .navbar-collapse {
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.header .navbar-collapse.collapse {
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.header .navbar-collapse.in {
+    background: linear-gradient(to right, rgba(107, 183, 86, 0.95), rgba(0, 143, 104, 0.95));
+}
+
+.header .navbar-toggle {
+    border: none;
+    border-radius: 0;
+}
+
+.header .navbar-toggle:hover,
+.header .navbar-toggle:focus,
+.header .navbar-toggle .active {
+    color: rgba(255, 255, 255, 0.7) !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+
+/* Custom, iPhone Retina */
+
+@media only screen and (min-width: 320px) {
+    .header .nav-menu-list-right li a {
+        float: left;
+    }
+}
+
+
+/* Extra Small Devices, Phones */
+
+@media only screen and (min-width: 480px) {
+    .header .nav-menu-list-right li a {
+        float: left;
+    }
+}

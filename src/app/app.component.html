@@ -1,0 +1,109 @@
+<nav class="navbar navbar-inverse navbar-fixed-top header">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+            <a class="navbar-brand" href="">
+                <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i> Demo Application
+            </a>
+        </div>
+    </div>
+</nav>
+<br>
+<br><br>
+<div class="col-md-3">
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a (click)="getUserInfoFromToken()" class="nav-link">Get User Information From Token</a>
+        </li>
+        <li class="list-group-item">
+            <a (click)="getUsersFromJsonApi()" class="nav-link">Get User List From API</a>
+        </li>
+        <li class="list-group-item">
+            <a (click)="getUsers()" class="nav-link">Get Users List</a>
+        </li>
+    </ul>
+</div>
+<div class="col-md-12">
+    <div class="jumbotron" *ngIf="isTokenCardVisible">
+        <h3 class="text-center">{{titleToken}}</h3>
+        <hr/>
+        <div class="card">
+            <div class="card-body text-center">
+                <h4 class="card-title">Logged In User Information</h4>
+                <p class="card-text">Username - {{username}}</p>
+                <p class="card-text">Full Name - {{fullName}}</p>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="logout()">Logout</button>
+    </div>
+</div>
+
+<!-- <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#" (click)="reset()">Angular Keycloak Blog Series - Part 6</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a (click)="getUserInfoFromToken()" class="nav-link">Get User Information From Token</a>
+            </li>
+            <li class="nav-item">
+                <a (click)="getUsersFromJsonApi()" class="nav-link">Get User List From API</a>
+            </li>
+        </ul>
+        <div class="navbar-nav mt-2 mt-md-0">
+            <button (click)="logout()" class="btn btn-outline-info my-2 my-sm-0" type="button">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div *ngIf="!isTokenCardVisible && !isAPICardsVisible" class="jumbotron">
+        <br/>
+        <h1 class="text-center">Click on the menu items</h1>
+    </div>
+    <div *ngIf="isTokenCardVisible" class="jumbotron">
+        <h1 class="text-center">{{titleToken}}</h1>
+        <hr/>
+        <div class="card" style="width: 25rem;">
+            <div class="card-body text-center">
+                <h4 class="card-title">Logged In User Information</h4>
+                <p class="card-text">Username - {{username}}</p>
+                <p class="card-text">Full Name - {{fullName}}</p>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div *ngIf="isAPICardsVisible" class="jumbotron">
+        <h1 class="text-center">{{titleAPIList}}</h1>
+        <hr/>
+        <div class="card-deck">
+            <div *ngFor="let userItem of usersArray" class="card" style="width: 25rem;">
+                <div class="card-body text-center">
+                    <h4 class="card-title">User Information Card {{userItem.id}}</h4>
+                    <p class="card-text">Username - {{userItem.username}}</p>
+                    <p class="card-text">Full Name - {{userItem.fullName}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div *ngIf="isAPICardsVisible" class="jumbotron">
+        <h1 class="text-center">{{titleAPIListExampleRequestHeader}}</h1>
+        <hr/>
+        <div class="card" style="width: 50rem;">
+            <div class="card-body text-left">
+                <h4 class="card-title">Request Headers</h4>
+                <p class="card-text">
+                    Host: localhost:4200<br/> User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0<br/> Accept: application/json, text/plain, */*<br/> Accept-Language: en-US,en;q=0.5<br/> Accept-Encoding: gzip, deflate<br/>                    Authorization: Bearer eyJhbG...<br/> Referer: http://localhost:4200/<br/> DNT: 1<br/> Connection: keep-alive<br/> Pragma: no-cache<br/> Cache-Control: no-cache<br/>
+                </p>
+            </div>
+        </div>
+    </div>
+</div> -->

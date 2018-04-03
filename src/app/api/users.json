@@ -1,0 +1,17 @@
+[
+	{
+		"id": "1",
+		"fullName": "Walther Smulders",
+		"username": "walther.smulders"
+	},
+	{
+		"id": "2",
+		"fullName": "John Smith",
+		"username": "john_smith"
+	},
+	{
+		"id": "3",
+		"fullName": "James Small",
+		"username": "james.small"
+	}
+]
