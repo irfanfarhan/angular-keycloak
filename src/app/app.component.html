@@ -2,11 +2,11 @@
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
             <a class="navbar-brand" href="">
                 <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i> Demo Application
             </a>
@@ -14,32 +14,117 @@
     </div>
 </nav>
 <br>
-<br><br>
-<div class="col-md-3">
-    <ul class="list-group">
-        <li class="list-group-item">
-            <a (click)="getUserInfoFromToken()" class="nav-link">Get User Information From Token</a>
-        </li>
-        <li class="list-group-item">
-            <a (click)="getUsersFromJsonApi()" class="nav-link">Get User List From API</a>
-        </li>
-        <li class="list-group-item">
-            <a (click)="getUsers()" class="nav-link">Get Users List</a>
-        </li>
-    </ul>
-</div>
-<div class="col-md-12">
-    <div class="jumbotron" *ngIf="isTokenCardVisible">
-        <h3 class="text-center">{{titleToken}}</h3>
-        <hr/>
-        <div class="card">
-            <div class="card-body text-center">
-                <h4 class="card-title">Logged In User Information</h4>
-                <p class="card-text">Username - {{username}}</p>
-                <p class="card-text">Full Name - {{fullName}}</p>
+<br>
+<br>
+<div class="row">
+    <div class="col-md-3">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a (click)="getUserInfoFromToken()" class="nav-link">Get User Information From Token</a>
+            </li>
+            <li class="list-group-item">
+                <a (click)="getUsersFromApi()" class="nav-link">Get User List From API</a>
+            </li>
+            <li class="list-group-item">
+                <a (click)="openAddUser()" class="nav-link">Add User</a>
+            </li>
+            <li class="list-group-item">
+                <a (click)="openAddMultipleUser()" class="nav-link">Add Multiple User</a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-9">
+        <div class="well" *ngIf="isTokenCardVisible">
+            <h3>User Information Obtained from the Token</h3>
+            <hr/>
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong>User Name</strong> - {{username}}</p>
+                    <p class="card-text">
+                        <strong>Full Name</strong> - {{fullName}}</p>
+                </div>
             </div>
         </div>
-        <button type="button" class="btn btn-primary" (click)="logout()">Logout</button>
+        <div *ngIf="isAPICardsVisible">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>UserName</th>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of usersArray">
+                        <td>{{user.id}}</td>
+                        <td>{{user.username}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.firstName}}</td>
+                        <td>{{user.lastName}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="isAddUserVisible">
+            <form class="form-horizontal" [formGroup]="createUserForm" (submit)="createUser(userData)">
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">User Name</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" formControlName="username" id="username" [(ngModel)]="userData.username" placeholder="User Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="col-sm-2 control-label">Email
+            <span style="color:red;">*</span>
+          </label>
+                    <div class="col-sm-4">
+                        <input type="email" class="form-control" id="email" formControlName="email" [(ngModel)]="userData.email" placeholder="Email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="firstName" class="col-sm-2 control-label">First Name</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="firstName" formControlName="firstName" [(ngModel)]="userData.firstName" placeholder="First Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName" class="col-sm-2 control-label">Last Name</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="lastName" formControlName="lastName" [(ngModel)]="userData.lastName" placeholder="Last Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-4">
+                        <button type="submit" class="btn btn-primary" [disabled]="!createUserForm.valid">Create user</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div *ngIf="isAddMultiUserVisible">
+            <h1>
+                Add Multiple users
+            </h1>
+
+            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7 file_upload">
+                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7 choose_file">
+                    <label class="choose_button btn btn-default ellipsed" for="my-file-selector">
+                    <input id="my-file-selector" name="file" type="file" #fileInput (change)="handleFile($event)">
+                        <span>Upload File</span>
+                    </label>
+                    <label id="upload-file-name" class="file_name">{{filename}}</label>
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" class="btn btn-primary" [disabled]="!(result.length>0)" (click)="addUsers(result)">Add Users</button>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" *ngIf="result && result.length>0">
+                <h2>Results</h2>
+                <code>{{results}}</code>
+            </div>
+        </div>
     </div>
 </div>
 

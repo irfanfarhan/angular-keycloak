@@ -9,7 +9,7 @@ export class KeycloakHttp extends Http {
 		super(backend, defaultOptions);
 	}
 
-	request(url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
+	request(url: string | Request, options?: RequestOptionsArgs, data?: any): Observable<Response> {
 		const tokenPromise: Promise<string> = this.keycloakService.getToken();
 		const tokenObservable: Observable<string> = Observable.fromPromise(tokenPromise);
 
