@@ -88,7 +88,7 @@ export class AppComponent {
     const credentials = [
       {
         'type': 'password',
-        'value': 'myPassword'
+        'value': 'welcome1'
       }
     ];
     userData['credentials'] = credentials;
