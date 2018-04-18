@@ -1,14 +1,14 @@
 .header {
-    background-color: #6bb756;
-    color: #fff;
+    background-color: grey;
+    color: #000000;
     border: none;
-    background: linear-gradient(to right, rgba(107, 183, 86, 0.95), rgba(0, 143, 104, 0.95));
+    background: grey;
     height: 3.75rem;
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
 .header .navbar-brand {
-    color: #fff !important;
+    color: #000000 !important;
     text-transform: capitalize;
     line-height: 23px;
     font-size: 16px;
@@ -27,7 +27,7 @@
 }
 
 .header .nav-menu-list-left li a {
-    color: #fff !important;
+    color: #000000 !important;
     text-transform: capitalize;
     line-height: 20px;
     font-size: 14px;
@@ -41,7 +41,7 @@
 .header .nav-menu-list-left li a:focus,
 .header .nav-menu-list-left li a .active {
     color: rgba(255, 255, 255, 0.7) !important;
-    background-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: grey;
 }
 
 .header .nav-menu-list-left li.active a {
@@ -49,7 +49,7 @@
 }
 
 .header .nav-menu-list-right li a {
-    color: #fff !important;
+    color: #000000 !important;
     text-transform: capitalize;
     line-height: 17px;
     font-size: 14px;
@@ -74,7 +74,7 @@
 }
 
 .header .navbar-collapse.in {
-    background: linear-gradient(to right, rgba(107, 183, 86, 0.95), rgba(0, 143, 104, 0.95));
+    background: grey;
 }
 
 .header .navbar-toggle {
@@ -86,7 +86,7 @@
 .header .navbar-toggle:focus,
 .header .navbar-toggle .active {
     color: rgba(255, 255, 255, 0.7) !important;
-    background-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: grey;
 }
 
 
@@ -112,7 +112,7 @@
 }
 
 .file_upload .choose_file {
-    border: 1px solid #337ab7;
+    border: 1px solid grey;
     padding: 0px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -163,8 +163,8 @@
     line-height: 20px;
     max-width: 120px;
     border: none;
-    background: #337ab7;
-    color: white;
+    background: grey;
+    color: #000000;
     font-size: 14px;
     outline: none;
     border-radius: 0;
@@ -184,4 +184,40 @@
 .file_upload .choose_button.btn:disabled {
     cursor: not-allowed;
     outline: none;
+}
+
+.navbar-nav li a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 1.1em;
+    color: #fff;
+}
+
+.dropdown-menu>li>a:focus,
+.dropdown-menu>li>a:hover {
+    color: #fff !important;
+    background-color: #000 !important;
+    cursor: pointer;
+}
+
+.navbar-nav li.open>a {
+    color: #fff !important;
+    background-color: grey;
+}
+
+.navbar-nav .dropdown-menu {
+    background: gray;
+}
+
+.navbar-nav .dropdown-menu li ul.multi-level {
+    background: gray;
+}
+
+.navbar-nav .dropdown-menu li a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.list-group a {
+    cursor: pointer;
 }

@@ -3,3 +3,7 @@
 body {
     padding-top: 50px;
 }
+
+.padding-none {
+    padding: 0 !important;
+}

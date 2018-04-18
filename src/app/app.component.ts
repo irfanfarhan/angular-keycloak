@@ -27,6 +27,7 @@ export class AppComponent {
   usersArray = [];
 
   userData: AddUser = new AddUser();
+  credentials: Credentials = new Credentials();
   createUserForm: FormGroup;
   result: any = [];
   results: any = [];
@@ -43,9 +44,12 @@ export class AppComponent {
       username: [''],
       firstName: [''],
       email: ['', Validators.required],
-      lastName: ['']
+      lastName: [''],
+      confirmPassword: [''],
+      password: ['']
     });
     this.filename = '';
+    this.getUserInfoFromToken();
   }
   reset(): void {
     this.isTokenCardVisible = false;
@@ -60,10 +64,12 @@ export class AppComponent {
     this.isAPICardsVisible = false;
     this.isTokenCardVisible = true;
     this.isAddUserVisible = false;
+    this.isAddMultiUserVisible = false;
   }
 
   getUsersFromApi(): void {
-    this.keycloakHttp.get('http://localhost:8080/auth/admin/realms/angular_keycloak/users?first=0&max=20')
+    const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users?first=0&max=20';
+    this.keycloakHttp.get(url)
       .map(response => response.json())
       .subscribe(
         result => {
@@ -82,36 +88,58 @@ export class AppComponent {
     this.isTokenCardVisible = false;
     this.isAddUserVisible = true;
     this.isAddMultiUserVisible = false;
+    this.userData = new AddUser();
   }
   createUser(userData): void {
-    console.log(this.userData);
-    const credentials = [
-      {
-        'type': 'password',
-        'value': 'welcome1'
-      }
-    ];
-    userData['credentials'] = credentials;
-    this.keycloakHttp.post('http://localhost:8080/auth/admin/realms/angular_keycloak/users', userData)
+    const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users';
+    this.keycloakHttp.post(url, userData)
       .subscribe(
         result => {
-          console.log(result);
-          this.toastr.success(' User is added successfully');
+          this.toastr.success(' User is added successfully.');
+          this.setPassword(result.headers.values()[0][0]);
+        },
+        error => {
+          console.log(error);
+          this.toastr.error(JSON.parse(error._body).errorMessage);
+        }
+      );
+  }
+
+  setPassword(api?: any) {
+    const url = api + '/reset-password';
+    this.keycloakHttp.put(url, this.credentials)
+      .subscribe(
+        result => {
           this.getUsersFromApi();
         },
         error => {
           console.log(error);
           this.toastr.error(JSON.parse(error._body).errorMessage);
         }
-      () => console.log('Request Completed :: AppComponent.getUsersFromJsonAPI()')
       );
   }
-
+  deleteUser(data) {
+    const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users/'  + data.id;
+    this.keycloakHttp.delete(url)
+      .subscribe(
+        result => {
+          this.toastr.success(data.username + ' is deleted successfully.');
+          this.getUsersFromApi();
+        },
+        error => {
+          console.log(error);
+          this.toastr.error(JSON.parse(error._body).errorMessage);
+        }
+      );
+  }
   openAddMultipleUser(): void {
     this.isAPICardsVisible = false;
     this.isTokenCardVisible = false;
     this.isAddUserVisible = false;
     this.isAddMultiUserVisible = true;
+    this.filename = '';
+    this.result = [];
+    this.results = [];
   }
 
   logout(): void {
@@ -153,29 +181,18 @@ export class AppComponent {
 }
 
 
-// {
-//     "username": "rodrigo.sasaki",
-//     "enabled": true,
-//     "totp": false,
-//     "emailVerified": false,
-//     "firstName": "Rodrigo",
-//     "lastName": "Sasaki",
-//     "email": "rodrigo.sasaki at email.com.br",
-//     "credentials": [
-//         {
-//             "type": "password",
-//             "value": "myPassword"
-//         }
-//     ]
-// }
-
-
 
 export class AddUser {
   username: string;
-  enabled: boolean = true,
+  enabled: boolean = true;
   emailVerified: string = '';
   firstName: string;
   lastName: string;
   email: string;
+}
+
+export class Credentials {
+  type: string = 'password';
+  value: string = 'welcome1';
+  temporary: boolean = true;
 }
