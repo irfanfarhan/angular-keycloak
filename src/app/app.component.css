@@ -221,3 +221,9 @@
 .list-group a {
     cursor: pointer;
 }
+
+.nav-pills>li>a,
+.nav-pills>li>a:focus,
+.nav-pills>li>a:hover {
+    cursor: pointer;
+}

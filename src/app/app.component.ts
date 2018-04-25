@@ -25,6 +25,11 @@ export class AppComponent {
   username: string;
   fullName: string;
   usersArray = [];
+  name: any;
+  search: any;
+  first: any;
+  max: number;
+  pervious: number;
 
   userData: AddUser = new AddUser();
   credentials: Credentials = new Credentials();
@@ -40,6 +45,8 @@ export class AppComponent {
   }
 
   ngOnInit() {
+    this.first = 0;
+    this.max = 20;
     this.createUserForm = this._fb.group({
       username: [''],
       firstName: [''],
@@ -67,8 +74,11 @@ export class AppComponent {
     this.isAddMultiUserVisible = false;
   }
 
-  getUsersFromApi(): void {
-    const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users?first=0&max=20';
+  getUsersFromApi(query?: any): void {
+    let url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users?first=' + this.first + '&max=' + this.max;
+    if (query) {
+      url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users?first=' + this.first + '&max=' + this.max + '&search=' + query;
+    }
     this.keycloakHttp.get(url)
       .map(response => response.json())
       .subscribe(
@@ -119,7 +129,7 @@ export class AppComponent {
       );
   }
   deleteUser(data) {
-    const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users/'  + data.id;
+    const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users/' + data.id;
     this.keycloakHttp.delete(url)
       .subscribe(
         result => {
@@ -142,6 +152,23 @@ export class AppComponent {
     this.results = [];
   }
 
+  searchRecords(query) {
+    console.log(query);
+    this.getUsersFromApi(query);
+  }
+  firstPage() {
+    this.first = 0;
+    this.max = 20;
+    this.getUsersFromApi();
+  }
+  previousPage() {
+    this.first = this.first - 20;
+    this.getUsersFromApi();
+  }
+  nextPage() {
+    this.first = this.first + 20;
+    this.getUsersFromApi();
+  }
   logout(): void {
     KeycloakService.logout();
   }
@@ -178,8 +205,22 @@ export class AppComponent {
       }
     }
   }
-}
+  formatText(data) {
+    if (data) {
+      console.log(data);
+      let format = data.split(' ');
+      format = format.charAt(0).toUpperCase().substr(3);
+      console.log(format);
+    }
+  }
 
+  transform(value) {
+    if (!value) return value;
+    return value.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.charAt(1).toUpperCase() + txt.charAt(2).toUpperCase() + txt.substr(3).toLowerCase();
+    });
+  }
+}
 
 
 export class AddUser {

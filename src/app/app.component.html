@@ -32,17 +32,35 @@
 <br>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
+        <div class="col-md-12">
+            <!-- <div class="list-group">
                 <a (click)="getUserInfoFromToken()" class="list-group-item" [ngClass]="{'active':isTokenCardVisible === true}">
           User Information
         </a>
                 <a (click)="getUsersFromApi()" class="list-group-item" [ngClass]="{'active':isAPICardsVisible === true}">Get Users</a>
                 <a (click)="openAddUser()" class="list-group-item" [ngClass]="{'active':isAddUserVisible === true}">Add User</a>
                 <a (click)="openAddMultipleUser()" class="list-group-item" [ngClass]="{'active':isAddMultiUserVisible === true}">Add Multiple User</a>
-            </div>
+            </div> -->
+            <ul class="nav nav-pills nav-justified">
+                <li role="presentation" [ngClass]="{'active':isTokenCardVisible === true}">
+                    <a (click)="getUserInfoFromToken()">
+                  User Information
+                </a>
+                </li>
+                <li role="presentation" [ngClass]="{'active':isAPICardsVisible === true}">
+                    <a (click)="getUsersFromApi()">Get Users
+                    </a>
+                </li>
+                <li role="presentation" [ngClass]="{'active':isAddUserVisible === true}">
+                    <a (click)="openAddUser()">Add User</a>
+                </li>
+                <li role="presentation" [ngClass]="{'active':isAddMultiUserVisible === true}">
+                    <a (click)="openAddMultipleUser()">Add Multiple User</a>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-12">
+            <br><br>
             <div class="panel panel-primary" *ngIf="isTokenCardVisible">
                 <div class="panel-heading">
                     <h3 class="panel-title">User Information</h3>
@@ -58,6 +76,17 @@
                     <h3 class="panel-title">Users</h3>
                 </div>
                 <div class="panel-body">
+                    <div class="col-lg-6 padding-none">
+                        <div class="input-group">
+                            <input type="text" class="form-control" [(ngModel)]="search" placeholder="Search for...">
+                            <span class="input-group-btn">
+                            <button class="btn btn-default" (click)="searchRecords(search)" type="button">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                            </span>
+                        </div>
+                    </div>
+                    <br><br><br>
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -87,6 +116,11 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div class="btn-group" role="group" *ngIf="usersArray && (usersArray.length >= max || first > 0)">
+                        <button type="button" class="btn btn-default" [disabled]="first === 0" (click)="firstPage()">First Page</button>
+                        <button type="button" class="btn btn-default" [disabled]="first === 0" (click)="previousPage()">Previous Page</button>
+                        <button type="button" class="btn btn-default" [disabled]="usersArray.length < max" (click)="nextPage()">Next Page</button>
+                    </div>
                 </div>
             </div>
             <div class="panel panel-primary" *ngIf="isAddUserVisible">
@@ -167,3 +201,8 @@
         </div>
     </div>
 </div>
+
+<!-- <div>
+    <input type="text" class="form-control" [(ngModel)]="name">
+    <label>{{transform(name)}}</label>
+</div> -->
