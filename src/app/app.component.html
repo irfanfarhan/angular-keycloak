@@ -52,7 +52,7 @@
                     </a>
                 </li>
                 <li role="presentation" [ngClass]="{'active':isAddUserVisible === true}">
-                    <a (click)="openAddUser()">Add User</a>
+                    <a (click)="openAddUser()">{{isEditable ? 'Edit' : 'Add'}} User</a>
                 </li>
                 <li role="presentation" [ngClass]="{'active':isAddMultiUserVisible === true}">
                     <a (click)="openAddMultipleUser()">Add Multiple User</a>
@@ -106,7 +106,7 @@
                                 <td>{{user.firstName}}</td>
                                 <td>{{user.lastName}}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-xs">
+                                    <button type="button" class="btn btn-primary btn-xs" (click)="editUser(user)">
                     <span class="glyphicon glyphicon-pencil"></span>
                   </button>
                                     <button type="button" (click)="deleteUser(user)" class="btn btn-danger btn-xs">
@@ -125,7 +125,7 @@
             </div>
             <div class="panel panel-primary" *ngIf="isAddUserVisible">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Add User</h3>
+                    <h3 class="panel-title">{{isEditable ? 'Edit' : 'Add'}} User</h3>
                 </div>
                 <div class="panel-body">
                     <form class="form-horizontal" [formGroup]="createUserForm" (submit)="createUser(userData)">
@@ -155,13 +155,13 @@
                                 <input type="text" class="form-control" id="lastName" formControlName="lastName" [(ngModel)]="userData.lastName" placeholder="Last Name">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" *ngIf="!isEditable">
                             <label for="password" class="col-sm-2 control-label">Password</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" id="password" formControlName="password" [(ngModel)]="credentials.value" placeholder="Password">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" *ngIf="!isEditable">
                             <label for="confirmPassword" class="col-sm-2 control-label">Confirm Password</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm Password">
@@ -169,7 +169,8 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
-                                <button type="submit" class="btn btn-primary" [disabled]="!createUserForm.valid">Create user</button>
+                                <button type="submit" class="btn btn-primary" *ngIf="!isEditable" [disabled]="!createUserForm.valid">Create user</button>
+                                <button type="submit" class="btn btn-primary" *ngIf="isEditable" [disabled]="!createUserForm.valid">Save user</button>
                             </div>
                         </div>
                     </form>

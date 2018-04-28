@@ -18,6 +18,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  isEditable: boolean  = false;
   isTokenCardVisible: boolean = false;
   isAPICardsVisible: boolean = false;
   isAddUserVisible: boolean = false;
@@ -62,6 +63,8 @@ export class AppComponent {
     this.isTokenCardVisible = false;
     this.isAPICardsVisible = false;
     this.isAddUserVisible = false;
+    this.isAddMultiUserVisible = false;
+    this.isEditable = false;
     this.usersArray = [];
   }
 
@@ -72,6 +75,7 @@ export class AppComponent {
     this.isTokenCardVisible = true;
     this.isAddUserVisible = false;
     this.isAddMultiUserVisible = false;
+    this.isEditable = false;
   }
 
   getUsersFromApi(query?: any): void {
@@ -88,6 +92,7 @@ export class AppComponent {
           this.isTokenCardVisible = false;
           this.isAddUserVisible = false;
           this.isAddMultiUserVisible = false;
+          this.isEditable = false;
         },
         error => console.log(error),
         () => console.log('Request Completed :: AppComponent.getUsersFromJsonAPI()')
@@ -98,21 +103,38 @@ export class AppComponent {
     this.isTokenCardVisible = false;
     this.isAddUserVisible = true;
     this.isAddMultiUserVisible = false;
+    this.isEditable = false;
     this.userData = new AddUser();
   }
   createUser(userData): void {
-    const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users';
-    this.keycloakHttp.post(url, userData)
-      .subscribe(
-        result => {
-          this.toastr.success(' User is added successfully.');
-          this.setPassword(result.headers.values()[0][0]);
-        },
-        error => {
-          console.log(error);
-          this.toastr.error(JSON.parse(error._body).errorMessage);
-        }
-      );
+    if (userData.id) {
+      const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users/' + userData.id;
+      this.keycloakHttp.put(url, userData)
+        .subscribe(
+          result => {
+            this.toastr.success(userData.username + ' is updated successfully.');
+            this.getUsersFromApi();
+            //this.setPassword(result.headers.values()[0][0]);
+          },
+          error => {
+            console.log(error);
+            this.toastr.error(JSON.parse(error._body).errorMessage);
+          }
+        );
+    } else {
+      const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users';
+      this.keycloakHttp.post(url, userData)
+        .subscribe(
+          result => {
+            this.toastr.success(' User is added successfully.');
+            this.setPassword(result.headers.values()[0][0]);
+          },
+          error => {
+            console.log(error);
+            this.toastr.error(JSON.parse(error._body).errorMessage);
+          }
+        );
+    }
   }
 
   setPassword(api?: any) {
@@ -147,6 +169,7 @@ export class AppComponent {
     this.isTokenCardVisible = false;
     this.isAddUserVisible = false;
     this.isAddMultiUserVisible = true;
+    this.isEditable = false;
     this.filename = '';
     this.result = [];
     this.results = [];
@@ -204,6 +227,15 @@ export class AppComponent {
         this.createUser(key);
       }
     }
+  }
+  editUser(data) {
+    console.log(data);
+    this.isAPICardsVisible = false;
+    this.isTokenCardVisible = false;
+    this.isAddUserVisible = true;
+    this.isAddMultiUserVisible = false;
+    this.userData = data;
+    this.isEditable = true;
   }
   formatText(data) {
     if (data) {
