@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {environment} from '../../environments/environment';
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 declare let Keycloak: any;
 
@@ -19,7 +19,7 @@ export class KeycloakService {
 		KeycloakService.auth.loggedIn = false;
 
 		return new Promise((resolve, reject) => {
-			keycloakAuth.init({onLoad: 'login-required'})
+			keycloakAuth.init({ onLoad: 'login-required' })
 				.success(() => {
 					console.log(keycloakAuth);
 					KeycloakService.auth.loggedIn = true;
@@ -51,6 +51,13 @@ export class KeycloakService {
 		return KeycloakService.auth.authz.tokenParsed.name;
 	}
 
+	static getEmail(): string {
+		return KeycloakService.auth.authz.tokenParsed.email;
+	}
+
+	static getRealm(): string {
+		return KeycloakService.auth.authz.realm;
+	}
 	getToken(): Promise<string> {
 		return new Promise<string>((resolve, reject) => {
 			if (KeycloakService.auth.authz.token) {

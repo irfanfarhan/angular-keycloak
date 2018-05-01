@@ -18,7 +18,9 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  isEditable: boolean  = false;
+  realm: string;
+  email: string;
+  isEditable: boolean = false;
   isTokenCardVisible: boolean = false;
   isAPICardsVisible: boolean = false;
   isAddUserVisible: boolean = false;
@@ -71,6 +73,8 @@ export class AppComponent {
   getUserInfoFromToken(): void {
     this.username = KeycloakService.getUsername();
     this.fullName = KeycloakService.getFullName();
+    this.email = KeycloakService.getEmail();
+    this.realm = KeycloakService.getRealm();
     this.isAPICardsVisible = false;
     this.isTokenCardVisible = true;
     this.isAddUserVisible = false;
@@ -79,9 +83,9 @@ export class AppComponent {
   }
 
   getUsersFromApi(query?: any): void {
-    let url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users?first=' + this.first + '&max=' + this.max;
+    let url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users?first=' + this.first + '&max=' + this.max;
     if (query) {
-      url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users?first=' + this.first + '&max=' + this.max + '&search=' + query;
+      url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users?first=' + this.first + '&max=' + this.max + '&search=' + query;
     }
     this.keycloakHttp.get(url)
       .map(response => response.json())
@@ -108,7 +112,7 @@ export class AppComponent {
   }
   createUser(userData): void {
     if (userData.id) {
-      const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users/' + userData.id;
+      const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users/' + userData.id;
       this.keycloakHttp.put(url, userData)
         .subscribe(
           result => {
@@ -122,7 +126,7 @@ export class AppComponent {
           }
         );
     } else {
-      const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users';
+      const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users';
       this.keycloakHttp.post(url, userData)
         .subscribe(
           result => {
@@ -151,7 +155,7 @@ export class AppComponent {
       );
   }
   deleteUser(data) {
-    const url = environment.keycloakRootUrl + '/admin/realms/angular_keycloak/users/' + data.id;
+    const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users/' + data.id;
     this.keycloakHttp.delete(url)
       .subscribe(
         result => {
@@ -236,6 +240,22 @@ export class AppComponent {
     this.isAddMultiUserVisible = false;
     this.userData = data;
     this.isEditable = true;
+  }
+  grantAccess(data) {
+    const requestPayload = { "realm": this.realm, "user": user.id }
+    const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users/' + user.id + '/impersonation';
+    this.keycloakHttp.post(url, requestPayload)
+      .subscribe(
+        result => {
+          console.log(JSON.parse(result._body).redirect);
+          const url = JSON.parse(result._body).redirect;
+          window.open(url, "_blank");
+        },
+        error => {
+          console.log(error);
+          this.toastr.error(JSON.parse(error._body).errorMessage);
+        }
+      );
   }
   formatText(data) {
     if (data) {
