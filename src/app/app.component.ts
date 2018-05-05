@@ -109,6 +109,9 @@ export class AppComponent {
     this.isAddMultiUserVisible = false;
     this.isEditable = false;
     this.userData = new AddUser();
+    this.credentials['value'] = 'welcome1';
+    this.createUserForm.controls['confirmPassword'].reset();
+    this.createUserForm.get('username').enable();
   }
   createUser(userData): void {
     if (userData.id) {
@@ -117,8 +120,8 @@ export class AppComponent {
         .subscribe(
           result => {
             this.toastr.success(userData.username + ' is updated successfully.');
+            this.setPassword(url);
             this.getUsersFromApi();
-            //this.setPassword(result.headers.values()[0][0]);
           },
           error => {
             console.log(error);
@@ -240,15 +243,18 @@ export class AppComponent {
     this.isAddMultiUserVisible = false;
     this.userData = data;
     this.isEditable = true;
+    this.createUserForm.get('username').disable();
+    this.createUserForm.controls['confirmPassword'].reset();
+    this.credentials = new Credentials();
   }
   grantAccess(data) {
-    const requestPayload = { "realm": this.realm, "user": user.id }
-    const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users/' + user.id + '/impersonation';
+    const requestPayload = { "realm": this.realm, "user": data.id }
+    const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users/' + data.id + '/impersonation';
     this.keycloakHttp.post(url, requestPayload)
       .subscribe(
         result => {
-          console.log(JSON.parse(result._body).redirect);
-          const url = JSON.parse(result._body).redirect;
+          console.log(result.json().redirect);
+          const url = result.json().redirect;
           window.open(url, "_blank");
         },
         error => {
@@ -282,10 +288,12 @@ export class AddUser {
   firstName: string;
   lastName: string;
   email: string;
+  createdTimestamp: string;
+  id:string;
 }
 
 export class Credentials {
   type: string = 'password';
-  value: string = 'welcome1';
+  value: string;
   temporary: boolean = true;
 }

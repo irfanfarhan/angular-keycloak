@@ -33,14 +33,6 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <!-- <div class="list-group">
-                <a (click)="getUserInfoFromToken()" class="list-group-item" [ngClass]="{'active':isTokenCardVisible === true}">
-          User Information
-        </a>
-                <a (click)="getUsersFromApi()" class="list-group-item" [ngClass]="{'active':isAPICardsVisible === true}">Get Users</a>
-                <a (click)="openAddUser()" class="list-group-item" [ngClass]="{'active':isAddUserVisible === true}">Add User</a>
-                <a (click)="openAddMultipleUser()" class="list-group-item" [ngClass]="{'active':isAddMultiUserVisible === true}">Add Multiple User</a>
-            </div> -->
             <ul class="nav nav-pills nav-justified">
                 <li role="presentation" [ngClass]="{'active':isTokenCardVisible === true}">
                     <a (click)="getUserInfoFromToken()">
@@ -134,7 +126,10 @@
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default" *ngIf="isAddUserVisible">
                     <div class="panel-heading">
-                        <h3 class="panel-title">{{isEditable ? 'Edit' : 'Add'}} User</h3>
+                        <h3 class="panel-title">{{isEditable ? 'Edit' : 'Add'}} User
+                            <span class="label label-info text-right" *ngIf="isEditable">{{userData.id}}</span>
+                            <span class="label label-success pull-right" *ngIf="isEditable"> Created At : {{userData.createdTimestamp | date}}</span>
+                        </h3>
                     </div>
                     <div class="panel-body">
                         <form class="form-horizontal" [formGroup]="createUserForm" (submit)="createUser(userData)">
@@ -164,13 +159,13 @@
                                     <input type="text" class="form-control" id="lastName" formControlName="lastName" [(ngModel)]="userData.lastName" placeholder="Last Name">
                                 </div>
                             </div>
-                            <div class="form-group" *ngIf="!isEditable">
+                            <div class="form-group">
                                 <label for="password" class="col-sm-4 control-label">Password</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" id="password" formControlName="password" [(ngModel)]="credentials.value" placeholder="Password">
                                 </div>
                             </div>
-                            <div class="form-group" *ngIf="!isEditable">
+                            <div class="form-group">
                                 <label for="confirmPassword" class="col-sm-4 control-label">Confirm Password</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm Password">
