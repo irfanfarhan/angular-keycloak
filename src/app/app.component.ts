@@ -18,6 +18,8 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  filteredItems: any;
+  rolesArray: any;
   realm: string;
   email: string;
   isEditable: boolean = false;
@@ -25,21 +27,25 @@ export class AppComponent {
   isAPICardsVisible: boolean = false;
   isAddUserVisible: boolean = false;
   isAddMultiUserVisible: boolean = false;
+  isRoleAllVisible: boolean = false;
+  isAddRoleVisible: boolean = false;
+  isRoleEditable: boolean = false;
   username: string;
   fullName: string;
   usersArray = [];
   name: any;
   search: any;
+  searchRole: any;
   first: any;
   max: number;
   pervious: number;
-
   userData: AddUser = new AddUser();
   credentials: Credentials = new Credentials();
   createUserForm: FormGroup;
+  createRoleForm: FormGroup;
+  roleData: AddRole = new AddRole();
   result: any = [];
   results: any = [];
-  
   _opened: boolean = true;
   _mode: string = 'push';
   _position: string = 'left';
@@ -63,17 +69,28 @@ export class AppComponent {
       confirmPassword: [''],
       password: ['']
     });
+    this.createRoleForm = this._fb.group({
+      name: ['', Validators.required],
+      description: ['']
+    });
     this.filename = '';
     this.getUserInfoFromToken();
   }
+
+  // Reset the all the functions
   reset(): void {
     this.isTokenCardVisible = false;
     this.isAPICardsVisible = false;
     this.isAddUserVisible = false;
     this.isAddMultiUserVisible = false;
+    this.isRoleAllVisible = false;
     this.isEditable = false;
+    this.isAddRoleVisible = false;
+    this.isRoleEditable = false;
     this.usersArray = [];
   }
+
+  // Get User Information
 
   getUserInfoFromToken(): void {
     this.username = KeycloakService.getUsername();
@@ -84,13 +101,18 @@ export class AppComponent {
     this.isTokenCardVisible = true;
     this.isAddUserVisible = false;
     this.isAddMultiUserVisible = false;
+    this.isRoleAllVisible = false;
     this.isEditable = false;
+    this.isAddRoleVisible = false;
+    this.isRoleEditable = false;
   }
 
+  // Open All users tab anf get all users function
+
   getUsersFromApi(query?: any): void {
-    let url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users?first=' + this.first + '&max=' + this.max;
+    let url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users?first=' + this.first + '&max=' + this.max;
     if (query) {
-      url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users?first=' + this.first + '&max=' + this.max + '&search=' + query;
+      url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users?first=' + this.first + '&max=' + this.max + '&search=' + query;
     }
     this.keycloakHttp.get(url)
       .map(response => response.json())
@@ -102,25 +124,38 @@ export class AppComponent {
           this.isAddUserVisible = false;
           this.isAddMultiUserVisible = false;
           this.isEditable = false;
+          this.isRoleAllVisible = false;
+          this.isAddRoleVisible = false;
+          this.isRoleEditable = false;
+          this.filename = '';
+          this.result = [];
+          this.results = [];
         },
         error => console.log(error),
         () => console.log('Request Completed :: AppComponent.getUsersFromJsonAPI()')
       );
   }
+
+  // Open User tab and Add user function
+
   openAddUser() {
     this.isAPICardsVisible = false;
     this.isTokenCardVisible = false;
     this.isAddUserVisible = true;
     this.isAddMultiUserVisible = false;
+    this.isRoleAllVisible = false;
     this.isEditable = false;
+    this.isAddRoleVisible = false;
+    this.isRoleEditable = false;
     this.userData = new AddUser();
     this.credentials['value'] = 'welcome1';
     this.createUserForm.controls['confirmPassword'].reset();
     this.createUserForm.get('username').enable();
   }
+
   createUser(userData): void {
     if (userData.id) {
-      const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users/' + userData.id;
+      const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + userData.id;
       this.keycloakHttp.put(url, userData)
         .subscribe(
           result => {
@@ -134,7 +169,7 @@ export class AppComponent {
           }
         );
     } else {
-      const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users';
+      const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users';
       this.keycloakHttp.post(url, userData)
         .subscribe(
           result => {
@@ -163,11 +198,11 @@ export class AppComponent {
       );
   }
   deleteUser(data) {
-    const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users/' + data.id;
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id;
     this.keycloakHttp.delete(url)
       .subscribe(
         result => {
-          this.toastr.success(data.username + ' is deleted successfully.');
+          this.toastr.success(data.username + ' user is deleted successfully.');
           this.getUsersFromApi();
         },
         error => {
@@ -176,37 +211,55 @@ export class AppComponent {
         }
       );
   }
+
+  editUser(data) {
+    console.log(data);
+    this.isAPICardsVisible = false;
+    this.isTokenCardVisible = false;
+    this.isAddUserVisible = true;
+    this.isAddMultiUserVisible = false;
+    this.isRoleAllVisible = false;
+    this.userData = data;
+    this.isEditable = true;
+    this.isAddRoleVisible = false;
+    this.isRoleEditable = false;
+    this.createUserForm.get('username').disable();
+    this.createUserForm.controls['confirmPassword'].reset();
+    this.credentials = new Credentials();
+  }
+
+  grantAccess(data) {
+    const requestPayload = { "realm": this.realm, "user": data.id }
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id + '/impersonation';
+    this.keycloakHttp.post(url, requestPayload)
+      .subscribe(
+        result => {
+          console.log(result.json().redirect);
+          const url = result.json().redirect;
+          window.open(url, "_blank");
+        },
+        error => {
+          console.log(error);
+          this.toastr.error(JSON.parse(error._body).errorMessage);
+        }
+      );
+  }
+  // Open Multiple User tab and Add multiple user function
+
   openAddMultipleUser(): void {
     this.isAPICardsVisible = false;
     this.isTokenCardVisible = false;
     this.isAddUserVisible = false;
     this.isAddMultiUserVisible = true;
     this.isEditable = false;
+    this.isRoleAllVisible = false;
+    this.isAddRoleVisible = false;
+    this.isRoleEditable = false;
     this.filename = '';
     this.result = [];
     this.results = [];
   }
 
-  searchRecords(query) {
-    console.log(query);
-    this.getUsersFromApi(query);
-  }
-  firstPage() {
-    this.first = 0;
-    this.max = 20;
-    this.getUsersFromApi();
-  }
-  previousPage() {
-    this.first = this.first - 20;
-    this.getUsersFromApi();
-  }
-  nextPage() {
-    this.first = this.first + 20;
-    this.getUsersFromApi();
-  }
-  logout(): void {
-    KeycloakService.logout();
-  }
   handleFile(event) {
     const inputEl: HTMLInputElement = this.inputEl.nativeElement;
 
@@ -231,7 +284,8 @@ export class AppComponent {
       this.results = JSON.stringify(this.result);
     });
   }
-  addUsers(data) {
+
+  addMultipleUsers(data) {
     if (data) {
       for (const key of this.result) {
         key['enabled'] = true;
@@ -240,27 +294,94 @@ export class AppComponent {
       }
     }
   }
-  editUser(data) {
-    console.log(data);
-    this.isAPICardsVisible = false;
-    this.isTokenCardVisible = false;
-    this.isAddUserVisible = true;
-    this.isAddMultiUserVisible = false;
-    this.userData = data;
-    this.isEditable = true;
-    this.createUserForm.get('username').disable();
-    this.createUserForm.controls['confirmPassword'].reset();
-    this.credentials = new Credentials();
-  }
-  grantAccess(data) {
-    const requestPayload = { "realm": this.realm, "user": data.id }
-    const url = environment.keycloakRootUrl + '/admin/realms/'+  this.realm + '/users/' + data.id + '/impersonation';
-    this.keycloakHttp.post(url, requestPayload)
+  // Open Roles Tab and Get all roles function 
+
+  getAllRoles(): void {
+    let url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/roles';
+    this.keycloakHttp.get(url)
+      .map(response => response.json())
       .subscribe(
         result => {
-          console.log(result.json().redirect);
-          const url = result.json().redirect;
-          window.open(url, "_blank");
+          this.rolesArray = result;
+          this.isAPICardsVisible = false;
+          this.isTokenCardVisible = false;
+          this.isAddUserVisible = false;
+          this.isAddMultiUserVisible = false;
+          this.isEditable = false;
+          this.isRoleAllVisible = true;
+          this.isAddRoleVisible = false;
+          this.isRoleEditable = false;
+          this.filename = '';
+          this.result = [];
+          this.results = [];
+          this.assignCopy();
+        },
+        error => console.log(error),
+        () => console.log('Request Completed :: AppComponent.getUsersFromJsonAPI()')
+      );
+  }
+
+  addRole(){
+    this.isAPICardsVisible = false;
+    this.isTokenCardVisible = false;
+    this.isAddUserVisible = false;
+    this.isAddMultiUserVisible = false;
+    this.isRoleAllVisible = false;
+    this.isEditable = false;
+    this.isAddRoleVisible = true;
+    this.isRoleEditable = false;
+    this.createRoleForm.get('name').enable();
+  }
+  createRole(roleData): void {
+    if (roleData.id) {
+      const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/roles-by-id/' + roleData.id;
+      this.keycloakHttp.put(url, roleData)
+        .subscribe(
+          result => {
+            this.toastr.success(roleData.name + ' role is updated successfully.');
+            this.getAllRoles();
+          },
+          error => {
+            console.log(error);
+            this.toastr.error(JSON.parse(error._body).errorMessage);
+          }
+        );
+    } else {
+      const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/roles';
+      this.keycloakHttp.post(url, roleData)
+        .subscribe(
+          result => {
+            this.toastr.success('Role is added successfully.');
+            this.getAllRoles();
+           },
+          error => {
+            console.log(error);
+            this.toastr.error(JSON.parse(error._body).errorMessage);
+          }
+        );
+    }
+  }
+
+  editRole(role) {
+    console.log(role);
+    this.isAPICardsVisible = false;
+    this.isTokenCardVisible = false;
+    this.isAddUserVisible = false;
+    this.isAddMultiUserVisible = false;
+    this.isRoleAllVisible = false;
+    this.roleData = role;
+    this.isEditable = false;
+    this.isAddRoleVisible = true;
+    this.isRoleEditable = true;
+    this.createRoleForm.get('name').disable();
+  }
+  deleteRole(role) {
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/roles-by-id/' + role.id;
+    this.keycloakHttp.delete(url)
+      .subscribe(
+        result => {
+          this.toastr.success(role.name + ' role is deleted successfully.');
+          this.getAllRoles();
         },
         error => {
           console.log(error);
@@ -268,21 +389,63 @@ export class AppComponent {
         }
       );
   }
-  formatText(data) {
-    if (data) {
-      console.log(data);
-      let format = data.split(' ');
-      format = format.charAt(0).toUpperCase().substr(3);
-      console.log(format);
-    }
+
+  // Search the all user functions
+
+  searchRecords(query) {
+    console.log(query);
+    this.getUsersFromApi(query);
   }
 
-  transform(value) {
-    if (!value) return value;
-    return value.replace(/\w\S*/g, function (txt) {
-      return txt.charAt(0).toUpperCase() + txt.charAt(1).toUpperCase() + txt.charAt(2).toUpperCase() + txt.substr(3).toLowerCase();
-    });
+  //  Search for all roles functions
+
+  assignCopy() {
+    this.filteredItems = Object.assign([], this.rolesArray);
   }
+  searchRoles(value) {
+    if (!value) this.assignCopy(); //when nothing has typed
+    this.filteredItems = Object.assign([], this.rolesArray).filter(
+      item => item.name.toLowerCase().indexOf(value.toLowerCase()) > -1
+    )
+  }
+
+// Pagination function for users
+
+firstPage() {
+  this.first = 0;
+  this.max = 20;
+  this.getUsersFromApi();
+}
+previousPage() {
+  this.first = this.first - 20;
+  this.getUsersFromApi();
+}
+nextPage() {
+  this.first = this.first + 20;
+  this.getUsersFromApi();
+}
+
+// Logout Function
+
+logout(): void {
+  KeycloakService.logout();
+}
+
+formatText(data) {
+  if (data) {
+    console.log(data);
+    let format = data.split(' ');
+    format = format.charAt(0).toUpperCase().substr(3);
+    console.log(format);
+  }
+}
+
+transform(value) {
+  if (!value) return value;
+  return value.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.charAt(1).toUpperCase() + txt.charAt(2).toUpperCase() + txt.substr(3).toLowerCase();
+  });
+}
 }
 
 
@@ -294,11 +457,21 @@ export class AddUser {
   lastName: string;
   email: string;
   createdTimestamp: string;
-  id:string;
+  id: string;
 }
 
 export class Credentials {
   type: string = 'password';
   value: string;
   temporary: boolean = true;
+}
+
+export class AddRole {
+  name: string;
+  scopeParamRequired: boolean = false;
+  description: string;
+  composite: boolean = false;
+  clientRole: boolean = false;
+  containerId: string;
+  id: string;
 }

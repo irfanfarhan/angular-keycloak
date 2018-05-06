@@ -1,249 +1,20 @@
-<!-- <nav class="navbar navbar-inverse navbar-fixed-top header">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-            <a class="navbar-brand" href="">
-                <img src="assets/images/logo.jpg" />
-            </a>
-        </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-user-circle-o" aria-hidden="true"></i> {{fullName}}
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu multi-level">
-                        <li>
-                            <a (click)="logout()">
-                                <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<br>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <ul class="nav nav-pills nav-justified">
-                <li role="presentation" [ngClass]="{'active':isTokenCardVisible === true}">
-                    <a (click)="getUserInfoFromToken()">
-                  User Information
-                </a>
-                </li>
-                <li role="presentation" [ngClass]="{'active':isAPICardsVisible === true}">
-                    <a (click)="getUsersFromApi()">Get Users
-                    </a>
-                </li>
-                <li role="presentation" [ngClass]="{'active':isAddUserVisible === true}">
-                    <a (click)="openAddUser()">{{isEditable ? 'Edit' : 'Add'}} User</a>
-                </li>
-                <li role="presentation" [ngClass]="{'active':isAddMultiUserVisible === true}">
-                    <a (click)="openAddMultipleUser()">Add Multiple User</a>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-12">
-            <br><br>
-            <div class="row" *ngIf="isTokenCardVisible">
-                <div class="col-md-4 col-md-offset-4">
-                    <div class="thumbnail">
-                        <br>
-                        <img src="assets/images/user.png" class="img-circle" alt="{{fullName}}">
-                        <div class="caption">
-                            <h3>{{fullName}}
-                                <span class="label label-default">{{username}}</span>
-                            </h3>
-                            <h5>Email
-                                <span class="label label-primary">{{email}}</span></h5>
-                            <h5>Realm
-                                <span class="label label-success">{{realm}}</span></h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default" *ngIf="isAPICardsVisible">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Users</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="col-lg-6 padding-none">
-                        <div class="input-group">
-                            <input type="text" class="form-control" [(ngModel)]="search" placeholder="Search for...">
-                            <span class="input-group-btn">
-                            <button class="btn btn-default" (click)="searchRecords(search)" type="button">
-                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                            </button>
-                            </span>
-                        </div>
-                    </div>
-                    <br><br><br>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>UserName</th>
-                                <th>Email</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let user of usersArray">
-                                <td>{{user.id}}</td>
-                                <td>{{user.username}}</td>
-                                <td>{{user.email}}</td>
-                                <td>{{user.firstName}}</td>
-                                <td>{{user.lastName}}</td>
-                                <td>
-                                    <button type="button" class="btn btn-primary btn-xs" (click)="editUser(user)">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </button>
-                                    <button type="button" (click)="grantAccess(user)" class="btn btn-success btn-xs">
-                                        <i class="fa fa-universal-access" aria-hidden="true"></i>
-                                     </button>
-                                    <button type="button" (click)="deleteUser(user)" class="btn btn-danger btn-xs">
-                                         <span class="glyphicon glyphicon-trash"></span>
-                                     </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="btn-group" role="group" *ngIf="usersArray && (usersArray.length >= max || first > 0)">
-                        <button type="button" class="btn btn-default" [disabled]="first === 0" (click)="firstPage()">First Page</button>
-                        <button type="button" class="btn btn-default" [disabled]="first === 0" (click)="previousPage()">Previous Page</button>
-                        <button type="button" class="btn btn-default" [disabled]="usersArray.length < max" (click)="nextPage()">Next Page</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-default" *ngIf="isAddUserVisible">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">{{isEditable ? 'Edit' : 'Add'}} User
-                            <span class="label label-info text-right" *ngIf="isEditable">{{userData.id}}</span>
-                            <span class="label label-success pull-right" *ngIf="isEditable"> Created At : {{userData.createdTimestamp | date: 'short'}}</span>
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <form class="form-horizontal" [formGroup]="createUserForm" (submit)="createUser(userData)">
-                            <div class="form-group">
-                                <label for="username" class="col-sm-4 control-label">User Name <span style="color:red;">*</span></label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" formControlName="username" id="username" [(ngModel)]="userData.username" placeholder="User Name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="email" class="col-sm-4 control-label">Email
-                <span style="color:red;">*</span>
-              </label>
-                                <div class="col-sm-8">
-                                    <input type="email" class="form-control" id="email" formControlName="email" [(ngModel)]="userData.email" placeholder="Email">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="firstName" class="col-sm-4 control-label">First Name</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="firstName" formControlName="firstName" [(ngModel)]="userData.firstName" placeholder="First Name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName" class="col-sm-4 control-label">Last Name</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="lastName" formControlName="lastName" [(ngModel)]="userData.lastName" placeholder="Last Name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="password" class="col-sm-4 control-label">Password</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="password" formControlName="password" [(ngModel)]="credentials.value" placeholder="Password">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="confirmPassword" class="col-sm-4 control-label">Confirm Password</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm Password">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-12 text-right">
-                                    <button type="submit" class="btn btn-primary" *ngIf="!isEditable" [disabled]="!createUserForm.valid">Create user</button>
-                                    <button type="submit" class="btn btn-primary" *ngIf="isEditable" [disabled]="!createUserForm.valid">Save user</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="panel panel-default" *ngIf="isAddMultiUserVisible">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"> Add Multiple Users</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 file_upload">
-                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 choose_file">
-                                <label class="choose_button btn btn-default ellipsed" for="my-file-selector">
-                  <input id="my-file-selector" name="file" type="file" #fileInput (change)="handleFile($event)">
-                  <span>Upload File</span>
-                </label>
-                                <label id="upload-file-name" class="file_name">{{filename}}</label>
-                            </div>
-                            <div class="col-sm-4">
-                                <button type="button" class="btn btn-primary" [disabled]="!(result.length>0)" (click)="addUsers(result)">Add Users</button>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" *ngIf="result && result.length>0">
-                            <h2>Results</h2>
-                            <code>{{results}}</code>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-
 <!-- <div>
     <input type="text" class="form-control" [(ngModel)]="name">
     <label>{{transform(name)}}</label>
 </div> -->
 <ng-sidebar-container>
     <ng-sidebar [(opened)]="_opened" [mode]="_mode" [position]="_position" [animate]="_animate" [sidebarClass]="'demo-sidebar'" [ariaLabel]="'My sidebar'">
-        <!-- <ul class="nav nav-pills nav-justified">
-            <li role="presentation" [ngClass]="{'active':isTokenCardVisible === true}">
-                <a (click)="getUserInfoFromToken()">
-              User Information
-            </a>
-            </li>
-            <li role="presentation" [ngClass]="{'active':isAPICardsVisible === true}">
-                <a (click)="getUsersFromApi()">Get Users
-                </a>
-            </li>
-            <li role="presentation" [ngClass]="{'active':isAddUserVisible === true}">
-                <a (click)="openAddUser()">{{isEditable ? 'Edit' : 'Add'}} User</a>
-            </li>
-            <li role="presentation" [ngClass]="{'active':isAddMultiUserVisible === true}">
-                <a (click)="openAddMultipleUser()">Add Multiple User</a>
-            </li>
-        </ul> -->
         <div class="vertical-menu">
             <h2>{{realm}}</h2>
             <h5>Configure</h5>
             <a (click)="getUserInfoFromToken()" [ngClass]="{'active':isTokenCardVisible === true}">
                 <i class="fa fa-address-card" aria-hidden="true"></i> User Information
             </a>
-            <a>
+            <a (click)="getAllRoles()" [ngClass]="{'active':isRoleAllVisible === true}">
                 <i class="fa fa-tasks" aria-hidden="true"></i> Get Role
             </a>
-            <a>
-                <i class="fa fa-tasks" aria-hidden="true"></i> Add Role
+            <a (click)="addRole()" [ngClass]="{'active':isAddRoleVisible === true}">
+                <i class="fa fa-plus-square" aria-hidden="true"></i> Add Role
             </a>
             <h5>Manage</h5>
             <a (click)="getUsersFromApi()" [ngClass]="{'active':isAPICardsVisible === true}">
@@ -252,7 +23,7 @@
             <a (click)="openAddUser()" [ngClass]="{'active':isAddUserVisible === true}">
                 <i class="fa fa-user-plus" aria-hidden="true"></i> {{isEditable ? 'Edit' : 'Add'}} User</a>
             <a (click)="openAddMultipleUser()" [ngClass]="{'active':isAddMultiUserVisible === true}">
-                <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Multiple User</a>
+                <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Multiple Users</a>
         </div>
     </ng-sidebar>
     <div ng-sidebar-content>
@@ -300,7 +71,7 @@
                                 <span class="label label-default">{{username}}</span>
                             </h3>
                             <h5>Email
-                                <span class="label label-primary">{{email}}</span></h5>
+                                <span class="label label-success">{{email}}</span></h5>
                             <h5>Realm
                                 <span class="label label-success">{{realm}}</span></h5>
                         </div>
@@ -321,6 +92,14 @@
                                 </span>
                             </div>
                         </div>
+                        <div class="col-lg-6 padding-none text-right">
+                            <button class="btn btn-default" type="button">
+                                        <i class="fa fa-user-plus" aria-hidden="true"></i> Add Role
+                                </button>
+                            <button class="btn btn-default" (click)="openAddMultipleUser()" type="button">
+                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Multiple Users
+                                </button>
+                        </div>
                         <br><br><br>
                         <table class="table table-hover">
                             <thead>
@@ -335,7 +114,11 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let user of usersArray">
-                                    <td>{{user.id}}</td>
+                                    <td>
+                                        <a (click)="editUser(user)">
+                                            {{user.id}}
+                                        </a>
+                                    </td>
                                     <td>{{user.username}}</td>
                                     <td>{{user.email}}</td>
                                     <td>{{user.firstName}}</td>
@@ -359,6 +142,58 @@
                             <button type="button" class="btn btn-default" [disabled]="first === 0" (click)="previousPage()">Previous Page</button>
                             <button type="button" class="btn btn-default" [disabled]="usersArray.length < max" (click)="nextPage()">Next Page</button>
                         </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" *ngIf="isRoleAllVisible">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Roles</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-lg-6 padding-none">
+                            <div class="input-group">
+                                <input type="text" class="form-control" (keyup)="searchRoles(searchRole)" [(ngModel)]="searchRole" placeholder="Search for roles">
+                                <span class="input-group-btn">
+                                        <button class="btn btn-default" (click)="searchRoles(searchRole)" type="button">
+                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 padding-none text-right">
+                            <button class="btn btn-default" (click)="addRole()" type="button">
+                                            <i class="fa fa-tasks" aria-hidden="true"></i> Add Role
+                                    </button>
+                        </div>
+                        <br><br><br>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Role Name</th>
+                                    <th>Composite</th>
+                                    <th>Description</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let role of filteredItems">
+                                    <td>
+                                        <a (click)="editRole(role)">
+                                            {{role.name}}
+                                        </a>
+                                    </td>
+                                    <td>{{role.composite}}</td>
+                                    <td>{{role?.description}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-xs" (click)="editRole(role)">
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                </button>
+                                        <button type="button" (click)="deleteRole(role)" class="btn btn-danger btn-xs">
+                                                     <span class="glyphicon glyphicon-trash"></span>
+                                                 </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="col-md-8 col-md-offset-2">
@@ -411,8 +246,8 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12 text-right">
-                                        <button type="submit" class="btn btn-primary" *ngIf="!isEditable" [disabled]="!createUserForm.valid">Create user</button>
-                                        <button type="submit" class="btn btn-primary" *ngIf="isEditable" [disabled]="!createUserForm.valid">Save user</button>
+                                        <button type="submit" class="btn btn-success" *ngIf="!isEditable" [disabled]="!createUserForm.valid">Create user</button>
+                                        <button type="submit" class="btn btn-success" *ngIf="isEditable" [disabled]="!createUserForm.valid">Save user</button>
                                     </div>
                                 </div>
                             </form>
@@ -432,13 +267,41 @@
                                     <label id="upload-file-name" class="file_name">{{filename}}</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <button type="button" class="btn btn-primary" [disabled]="!(result.length>0)" (click)="addUsers(result)">Add Users</button>
+                                    <button type="button" class="btn btn-success" [disabled]="!(result.length>0)" (click)="addMultipleUsers(result)">Add Users</button>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" *ngIf="result && result.length>0">
                                 <h2>Results</h2>
                                 <code>{{results}}</code>
                             </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default" *ngIf="isAddRoleVisible">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{isRoleEditable ? 'Edit' : 'Add'}} Role</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" [formGroup]="createRoleForm" (submit)="createRole(roleData)">
+                                <div class="form-group">
+                                    <label for="name" class="col-sm-4 control-label">Role Name <span style="color:red;">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" formControlName="name" id="name" [(ngModel)]="roleData.name" placeholder="Role Name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description" class="col-sm-4 control-label">Description
+                          </label>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control" id="description" rows="6" cols="40" formControlName="description" [(ngModel)]="roleData.description" placeholder="Description"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12 text-right">
+                                        <button type="submit" class="btn btn-success" *ngIf="!isRoleEditable" [disabled]="!createRoleForm.valid">Create Role</button>
+                                        <button type="submit" class="btn btn-success" *ngIf="isRoleEditable" [disabled]="!createRoleForm.valid">Save Role</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
