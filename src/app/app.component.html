@@ -240,10 +240,10 @@
                 <i class="fa fa-address-card" aria-hidden="true"></i> User Information
             </a>
             <a>
-                <i class="fa fa-briefcase" aria-hidden="true"></i> Get Role
+                <i class="fa fa-tasks" aria-hidden="true"></i> Get Role
             </a>
             <a>
-                <i class="fa fa-briefcase" aria-hidden="true"></i> Add Role
+                <i class="fa fa-tasks" aria-hidden="true"></i> Add Role
             </a>
             <h5>Manage</h5>
             <a (click)="getUsersFromApi()" [ngClass]="{'active':isAPICardsVisible === true}">
@@ -252,7 +252,7 @@
             <a (click)="openAddUser()" [ngClass]="{'active':isAddUserVisible === true}">
                 <i class="fa fa-user-plus" aria-hidden="true"></i> {{isEditable ? 'Edit' : 'Add'}} User</a>
             <a (click)="openAddMultipleUser()" [ngClass]="{'active':isAddMultiUserVisible === true}">
-                <i class="fa fa-tasks" aria-hidden="true"></i> Add Multiple User</a>
+                <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Multiple User</a>
         </div>
     </ng-sidebar>
     <div ng-sidebar-content>
