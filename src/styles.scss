@@ -1,0 +1,27 @@
+/* You can add global styles to this file, and also import other style files */
+
+body {
+    padding-top: 50px;
+}
+
+.padding-none {
+    padding: 0 !important;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    background: #f6f6f6;
+    color: #545555;
+    font: 400 1em/1.25 'Source Sans Pro', 'Helvetica', 'Arial', sans-serif;
+}

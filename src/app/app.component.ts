@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AnimationTransitionEvent } from '@angular/core';
 import { KeycloakService } from './keycloak/keycloak.service';
 import { KeycloakHttp } from './keycloak/keycloak.http';
 import { environment } from '../environments/environment';
@@ -15,7 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   realm: string;
@@ -39,6 +39,11 @@ export class AppComponent {
   createUserForm: FormGroup;
   result: any = [];
   results: any = [];
+  
+  _opened: boolean = true;
+  _mode: string = 'push';
+  _position: string = 'left';
+  _animate: boolean = true;
   @ViewChild('fileInput') inputEl: ElementRef;
   filename: string;
   constructor(private keycloakHttp: KeycloakHttp,

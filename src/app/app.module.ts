@@ -8,6 +8,7 @@ import {KeycloakHttp, keycloakHttpFactory} from './keycloak/keycloak.http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { XlsxToJsonService } from './xlsx-to-json-service';
 import { ToastrModule } from 'ngx-toastr';
+import { SidebarModule } from 'ng-sidebar';
 
 @NgModule({
 	declarations: [
@@ -19,7 +20,8 @@ import { ToastrModule } from 'ngx-toastr';
 		HttpModule,
     FormsModule,
     ReactiveFormsModule,
-    ToastrModule.forRoot()
+	ToastrModule.forRoot(),
+	SidebarModule.forRoot()
 	],
 	providers: [
 		{
