@@ -199,10 +199,10 @@
                 <div class="col-md-8 col-md-offset-2">
                     <div class="panel panel-default" *ngIf="isAddUserVisible">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{{isEditable ? userData.username : 'Add User'}}
+                            <h4>{{isEditable ? userData.username : 'Add User'}}
                                 <span class="glyphicon glyphicon-trash cursor-pointer" (click)="deleteUser(userData)" *ngIf="isEditable"></span>
                                 <span class="label label-success pull-right" *ngIf="isEditable"> Created At : {{userData.createdTimestamp | date: 'short'}}</span>
-                            </h3>
+                            </h4>
                             <span class="label label-info text-right" *ngIf="isEditable">{{userData.id}}</span>
                         </div>
                         <div class="panel-body">
@@ -312,9 +312,9 @@
                     </div>
                     <div class="panel panel-default" *ngIf="isAddRoleVisible">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{{isRoleEditable ? roleData.name : 'Add Role'}}
-                                <span class="glyphicon glyphicon-trash cursor-pointer" (click)="deleteRole(roleData)" *ngIf="isRoleEditable"></span>
-                            </h3>
+                            <h4>{{isRoleEditable ? roleData.name : 'Add Role'}} <span class="glyphicon glyphicon-trash cursor-pointer" (click)="deleteRole(roleData)" *ngIf="isRoleEditable">
+                                </span>
+                            </h4>
                         </div>
                         <div class="panel-body">
                             <form class="form-horizontal" [formGroup]="createRoleForm" (submit)="createRole(roleData)">
