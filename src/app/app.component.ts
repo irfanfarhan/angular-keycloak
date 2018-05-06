@@ -18,6 +18,9 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  assignedRoles: any;
+  availableRoles: any;
+  effectiveRoles: any;
   filteredItems: any;
   rolesArray: any;
   realm: string;
@@ -161,7 +164,6 @@ export class AppComponent {
           result => {
             this.toastr.success(userData.username + ' is updated successfully.');
             this.setPassword(url);
-            this.getUsersFromApi();
           },
           error => {
             console.log(error);
@@ -189,7 +191,7 @@ export class AppComponent {
     this.keycloakHttp.put(url, this.credentials)
       .subscribe(
         result => {
-          this.getUsersFromApi();
+          this.editUser('', api);
         },
         error => {
           console.log(error);
@@ -212,22 +214,66 @@ export class AppComponent {
       );
   }
 
-  editUser(data) {
-    console.log(data);
-    this.isAPICardsVisible = false;
-    this.isTokenCardVisible = false;
-    this.isAddUserVisible = true;
-    this.isAddMultiUserVisible = false;
-    this.isRoleAllVisible = false;
-    this.userData = data;
-    this.isEditable = true;
-    this.isAddRoleVisible = false;
-    this.isRoleEditable = false;
-    this.createUserForm.get('username').disable();
-    this.createUserForm.controls['confirmPassword'].reset();
-    this.credentials = new Credentials();
+  editUser(data?:any, query?:any) {
+    let url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id;
+    if (query) {
+      url = query;
+    }
+    this.keycloakHttp.get(url)
+      .map(response => response.json())
+      .subscribe(
+        result => {
+          console.log(result);
+          this.isAPICardsVisible = false;
+          this.isTokenCardVisible = false;
+          this.isAddUserVisible = true;
+          this.isAddMultiUserVisible = false;
+          this.isRoleAllVisible = false;
+          this.userData = result;
+          this.isEditable = true;
+          this.isAddRoleVisible = false;
+          this.isRoleEditable = false;
+          this.createUserForm.get('username').disable();
+          this.createUserForm.controls['confirmPassword'].reset();
+          this.credentials = new Credentials();
+          this.getAssignedRoles(result);
+          this.getRolesMapping(result, 'composite');
+          this.getRolesMapping(result, 'available');
+         },
+        error => console.log(error),
+        () => console.log('Request Completed :: AppComponent.getUsersFromJsonAPI()')
+      );
   }
 
+  getRolesMapping(data, value?:any){
+    let url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id + '/role-mappings/realm/' + value;
+    this.keycloakHttp.get(url)
+      .map(response => response.json())
+      .subscribe(
+        result => {
+          console.log(result);
+          if(value === 'composite'){
+            this.effectiveRoles = result;
+          }
+          if(value === 'available'){
+            this.availableRoles = result;
+          } 
+         },
+        error => console.log(error)
+       );
+  }
+  getAssignedRoles(data,){
+    const url =  environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id + '/role-mappings/realm';
+     this.keycloakHttp.get(url)
+      .map(response => response.json())
+      .subscribe(
+        result => {
+          console.log(result);
+            this.assignedRoles = result;
+         },
+        error => console.log(error)
+       );
+  }
   grantAccess(data) {
     const requestPayload = { "realm": this.realm, "user": data.id }
     const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id + '/impersonation';

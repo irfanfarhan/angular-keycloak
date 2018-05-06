@@ -93,8 +93,8 @@
                             </div>
                         </div>
                         <div class="col-lg-6 padding-none text-right">
-                            <button class="btn btn-default" type="button">
-                                        <i class="fa fa-user-plus" aria-hidden="true"></i> Add Role
+                            <button class="btn btn-default" type="button" (click)="openAddUser()">
+                                        <i class="fa fa-user-plus" aria-hidden="true"></i> Add User
                                 </button>
                             <button class="btn btn-default" (click)="openAddMultipleUser()" type="button">
                                         <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Multiple Users
@@ -199,12 +199,14 @@
                 <div class="col-md-8 col-md-offset-2">
                     <div class="panel panel-default" *ngIf="isAddUserVisible">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{{isEditable ? 'Edit' : 'Add'}} User
-                                <span class="label label-info text-right" *ngIf="isEditable">{{userData.id}}</span>
+                            <h3 class="panel-title">{{isEditable ? userData.username : 'Add User'}}
+                                <span class="glyphicon glyphicon-trash cursor-pointer" (click)="deleteUser(userData)" *ngIf="isEditable"></span>
                                 <span class="label label-success pull-right" *ngIf="isEditable"> Created At : {{userData.createdTimestamp | date: 'short'}}</span>
                             </h3>
+                            <span class="label label-info text-right" *ngIf="isEditable">{{userData.id}}</span>
                         </div>
                         <div class="panel-body">
+                            <h4 *ngIf="isEditable">User Details <span class="label label-default">Edit</span></h4>
                             <form class="form-horizontal" [formGroup]="createUserForm" (submit)="createUser(userData)">
                                 <div class="form-group">
                                     <label for="username" class="col-sm-4 control-label">User Name <span style="color:red;">*</span></label>
@@ -251,6 +253,38 @@
                                     </div>
                                 </div>
                             </form>
+                            <div *ngIf="isEditable">
+                                <h4>Role Mapping <span class="label label-default">Edit</span></h4>
+                                <br>
+                                <br>
+                                <div class="list-group col-lg-4 col-md-4">
+                                    <label>Available Roles</label>
+                                    <a class="list-group-item" *ngFor="let role of availableRoles">
+                                                {{role.name}}
+                                            </a>
+                                    <br>
+                                    <div class="text-right">
+                                        <button type="button" class="btn btn-success">Add</button>
+                                    </div>
+                                </div>
+                                <div class="list-group col-lg-4 col-md-4">
+                                    <label>Assigned Roles</label>
+                                    <a class="list-group-item" *ngFor="let role of assignedRoles">
+                                                {{role.name}}
+                                            </a>
+                                    <br>
+                                    <div class="text-right">
+                                        <button type="button" class="btn btn-success">Remove</button>
+                                    </div>
+                                </div>
+                                <div class="list-group col-lg-4 col-md-4">
+                                    <label>Effective Roles </label>
+                                    <a class="list-group-item disabled" *ngFor="let role of effectiveRoles">
+                                        {{role.name}}
+                                    </a>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     <div class="panel panel-default" *ngIf="isAddMultiUserVisible">
@@ -278,7 +312,9 @@
                     </div>
                     <div class="panel panel-default" *ngIf="isAddRoleVisible">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{{isRoleEditable ? 'Edit' : 'Add'}} Role</h3>
+                            <h3 class="panel-title">{{isRoleEditable ? roleData.name : 'Add Role'}}
+                                <span class="glyphicon glyphicon-trash cursor-pointer" (click)="deleteRole(roleData)" *ngIf="isRoleEditable"></span>
+                            </h3>
                         </div>
                         <div class="panel-body">
                             <form class="form-horizontal" [formGroup]="createRoleForm" (submit)="createRole(roleData)">

@@ -26,6 +26,10 @@ body {
     //font: 400 1em/1.25 'Source Sans Pro', 'Helvetica', 'Arial', sans-serif;
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 a {
     cursor: pointer;
     &:hover {
