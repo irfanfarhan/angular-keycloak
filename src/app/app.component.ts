@@ -55,6 +55,11 @@ export class AppComponent {
   _animate: boolean = true;
   @ViewChild('fileInput') inputEl: ElementRef;
   filename: string;
+  newAssignedTypes: any[] = [];
+  availableRoleAdded: any[] = [];
+  assignedRoleAdded: any[] = [];
+  @ViewChild('typesElement') typesElement: ElementRef;
+  @ViewChild('typesElAssigned') typesElAssigned: ElementRef;
   constructor(private keycloakHttp: KeycloakHttp,
     private _fb: FormBuilder,
     private xlsxToJsonService: XlsxToJsonService,
@@ -214,7 +219,7 @@ export class AppComponent {
       );
   }
 
-  editUser(data?:any, query?:any) {
+  editUser(data?: any, query?: any) {
     let url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id;
     if (query) {
       url = query;
@@ -239,40 +244,40 @@ export class AppComponent {
           this.getAssignedRoles(result);
           this.getRolesMapping(result, 'composite');
           this.getRolesMapping(result, 'available');
-         },
+        },
         error => console.log(error),
         () => console.log('Request Completed :: AppComponent.getUsersFromJsonAPI()')
       );
   }
 
-  getRolesMapping(data, value?:any){
+  getRolesMapping(data, value?: any) {
     let url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id + '/role-mappings/realm/' + value;
     this.keycloakHttp.get(url)
       .map(response => response.json())
       .subscribe(
         result => {
           console.log(result);
-          if(value === 'composite'){
+          if (value === 'composite') {
             this.effectiveRoles = result;
           }
-          if(value === 'available'){
+          if (value === 'available') {
             this.availableRoles = result;
-          } 
-         },
+          }
+        },
         error => console.log(error)
-       );
+      );
   }
-  getAssignedRoles(data,){
-    const url =  environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id + '/role-mappings/realm';
-     this.keycloakHttp.get(url)
+  getAssignedRoles(data, ) {
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id + '/role-mappings/realm';
+    this.keycloakHttp.get(url)
       .map(response => response.json())
       .subscribe(
         result => {
           console.log(result);
-            this.assignedRoles = result;
-         },
+          this.assignedRoles = result;
+        },
         error => console.log(error)
-       );
+      );
   }
   grantAccess(data) {
     const requestPayload = { "realm": this.realm, "user": data.id }
@@ -367,7 +372,65 @@ export class AppComponent {
       );
   }
 
-  addRole(){
+
+  toggleAvailableActive(element: any, index: number) {
+    const el = this[element].nativeElement.children[index];
+    if (el.classList.contains('selected')) {
+      el.classList.remove('selected');
+      let indexValue = this.availableRoleAdded.findIndex(d => d.id === this.availableRoles[index].id); //find index in your array
+      this.availableRoleAdded.splice(indexValue, 1);//remove element from array
+    } else {
+      el.classList.add('selected');
+      this.availableRoleAdded.push(this.availableRoles[index]);
+      console.log(this.availableRoleAdded);
+    }
+  }
+  toggleAssignedActive(element: any, index: number) {
+    const el = this[element].nativeElement.children[index];
+    if (el.classList.contains('selected')) {
+      el.classList.remove('selected');
+      let indexValue = this.assignedRoleAdded.findIndex(d => d.id === this.assignedRoles[index].id); //find index in your array
+      this.assignedRoleAdded.splice(indexValue, 1);//remove element from array
+    } else {
+      el.classList.add('selected');
+      this.assignedRoleAdded.push(this.assignedRoles[index]);
+      console.log(this.assignedRoleAdded);
+    }
+  }
+  addItem(element: any, assignedList) {
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + this.userData.id + '/role-mappings/realm';
+    this.keycloakHttp.post(url, this.availableRoleAdded)
+      .subscribe(
+        result => {
+          this.toastr.success('Role is added successfully.');
+          this.getAssignedRoles(this.userData);
+          this.getRolesMapping(this.userData, 'composite');
+          this.getRolesMapping(this.userData, 'available');
+        },
+        error => {
+          console.log(error);
+          this.toastr.error(JSON.parse(error._body).errorMessage);
+        }
+      );
+  }
+
+  removeItem(element: any, assignedList) {
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + this.userData.id + '/role-mappings/realm';
+    this.keycloakHttp.post(url, this.assignedRoleAdded)
+      .subscribe(
+        result => {
+          this.toastr.success('Role is added successfully.');
+          this.getAssignedRoles(this.userData);
+          this.getRolesMapping(this.userData, 'composite');
+          this.getRolesMapping(this.userData, 'available');
+        },
+        error => {
+          console.log(error);
+          this.toastr.error(JSON.parse(error._body).errorMessage);
+        }
+      );
+  }
+  addRole() {
     this.isAPICardsVisible = false;
     this.isTokenCardVisible = false;
     this.isAddUserVisible = false;
@@ -376,6 +439,7 @@ export class AppComponent {
     this.isEditable = false;
     this.isAddRoleVisible = true;
     this.isRoleEditable = false;
+    this.roleData = new AddRole();
     this.createRoleForm.get('name').enable();
   }
   createRole(roleData): void {
@@ -399,7 +463,7 @@ export class AppComponent {
           result => {
             this.toastr.success('Role is added successfully.');
             this.getAllRoles();
-           },
+          },
           error => {
             console.log(error);
             this.toastr.error(JSON.parse(error._body).errorMessage);
@@ -455,43 +519,43 @@ export class AppComponent {
     )
   }
 
-// Pagination function for users
+  // Pagination function for users
 
-firstPage() {
-  this.first = 0;
-  this.max = 20;
-  this.getUsersFromApi();
-}
-previousPage() {
-  this.first = this.first - 20;
-  this.getUsersFromApi();
-}
-nextPage() {
-  this.first = this.first + 20;
-  this.getUsersFromApi();
-}
-
-// Logout Function
-
-logout(): void {
-  KeycloakService.logout();
-}
-
-formatText(data) {
-  if (data) {
-    console.log(data);
-    let format = data.split(' ');
-    format = format.charAt(0).toUpperCase().substr(3);
-    console.log(format);
+  firstPage() {
+    this.first = 0;
+    this.max = 20;
+    this.getUsersFromApi();
   }
-}
+  previousPage() {
+    this.first = this.first - 20;
+    this.getUsersFromApi();
+  }
+  nextPage() {
+    this.first = this.first + 20;
+    this.getUsersFromApi();
+  }
 
-transform(value) {
-  if (!value) return value;
-  return value.replace(/\w\S*/g, function (txt) {
-    return txt.charAt(0).toUpperCase() + txt.charAt(1).toUpperCase() + txt.charAt(2).toUpperCase() + txt.substr(3).toLowerCase();
-  });
-}
+  // Logout Function
+
+  logout(): void {
+    KeycloakService.logout();
+  }
+
+  formatText(data) {
+    if (data) {
+      console.log(data);
+      let format = data.split(' ');
+      format = format.charAt(0).toUpperCase().substr(3);
+      console.log(format);
+    }
+  }
+
+  transform(value) {
+    if (!value) return value;
+    return value.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.charAt(1).toUpperCase() + txt.charAt(2).toUpperCase() + txt.substr(3).toLowerCase();
+    });
+  }
 }
 
 

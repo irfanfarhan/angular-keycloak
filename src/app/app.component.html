@@ -257,7 +257,7 @@
                                 <h4>Role Mapping <span class="label label-default">Edit</span></h4>
                                 <br>
                                 <br>
-                                <div class="list-group col-lg-4 col-md-4">
+                                <!-- <div class="list-group col-lg-4 col-md-4">
                                     <label>Available Roles</label>
                                     <a class="list-group-item" *ngFor="let role of availableRoles">
                                                 {{role.name}}
@@ -276,12 +276,52 @@
                                     <div class="text-right">
                                         <button type="button" class="btn btn-success">Remove</button>
                                     </div>
-                                </div>
-                                <div class="list-group col-lg-4 col-md-4">
-                                    <label>Effective Roles </label>
-                                    <a class="list-group-item disabled" *ngFor="let role of effectiveRoles">
-                                        {{role.name}}
-                                    </a>
+                                </div> -->
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-none">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-none margin-bottom">
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                            <span>Available Roles</span>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                            <span>Assigned Roles</span>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                            <span>Effective Roles</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-none margin-bottom">
+                                        <div class="list-view col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                            <div #typesElement>
+                                                <a *ngFor="let role of availableRoles; let i = index" class="list-group-item" (click)="toggleAvailableActive('typesElement',i)">{{role.name}}</a>
+                                            </div>
+                                        </div>
+                                        <div class="list-view col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                            <div #typesElAssigned>
+                                                <a *ngFor="let role of assignedRoles; let i = index" class="list-group-item" (click)="toggleAssignedActive('typesElAssigned',i)">{{role.name}}</a>
+                                            </div>
+                                        </div>
+                                        <div class="list-view col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                            <div>
+                                                <a *ngFor="let role of effectiveRoles; let i = index" class="list-group-item disabled">{{role.name}}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-none">
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                            <div class="text-right">
+                                                <button type="button" class="btn btn-success" (click)="addItem('typesElement','newAssignedTypes')">Add</button>
+                                            </div>
+                                        </div>
+                                        <!-- <div class=" col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                                        <a class="control glyphicon glyphicon-chevron-right" (click)="addItem('countriesElement','newAssignedCountries')"></a>
+                                        <a class="control glyphicon glyphicon-chevron-left" (click)="removeItem('countriesElAssigned','newAssignedCountries')"></a>
+                                    </div> -->
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                            <div class="text-right">
+                                                <button type="button" class="btn btn-success" (click)="removeItem('typesElAssigned','newAssignedTypes')">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
