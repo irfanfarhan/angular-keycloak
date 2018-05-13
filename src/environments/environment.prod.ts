@@ -1,4 +1,4 @@
 export const environment = {
 	production: true,
-	keycloakRootUrl: 'https://vendor.tractorsupply.com/auth'
+	keycloakRootUrl: 'http://localhost:8080/auth'
 };
