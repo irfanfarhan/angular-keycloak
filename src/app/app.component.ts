@@ -415,8 +415,9 @@ export class AppComponent {
   }
 
   removeItem(element: any, assignedList) {
-    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + this.userData.id + '/role-mappings/realm';
-    this.keycloakHttp.post(url, this.assignedRoleAdded)
+    //const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + this.userData.id + '/role-mappings/realm';
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/roles-by-id/' + this.userData.id + '/role-mappings/realm/' + this.assignedRoleAdded[0].id + 'composites';
+    this.keycloakHttp.delete(url)
       .subscribe(
         result => {
           this.toastr.success('Role is added successfully.');
