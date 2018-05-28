@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { XlsxToJsonService } from './xlsx-to-json-service';
 import { ToastrModule } from 'ngx-toastr';
 import { SidebarModule } from 'ng-sidebar';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
 	declarations: [
@@ -19,9 +20,11 @@ import { SidebarModule } from 'ng-sidebar';
     BrowserAnimationsModule,
 		HttpModule,
     FormsModule,
-    ReactiveFormsModule,
+	ReactiveFormsModule,
+	ModalModule,
 	ToastrModule.forRoot(),
-	SidebarModule.forRoot()
+	SidebarModule.forRoot(),
+	ModalModule.forRoot()
 	],
 	providers: [
 		{

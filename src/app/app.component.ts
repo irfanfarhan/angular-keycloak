@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AnimationTransitionEvent } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AnimationTransitionEvent, TemplateRef } from '@angular/core';
 import { KeycloakService } from './keycloak/keycloak.service';
 import { KeycloakHttp } from './keycloak/keycloak.http';
 import { environment } from '../environments/environment';
@@ -10,14 +10,18 @@ import {
 } from '@angular/forms';
 import { XlsxToJsonService } from './xlsx-to-json-service';
 import { ToastrService } from 'ngx-toastr';
-
-
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  deletedRole: any;
+  deletedUser: any;
+  modalRef: BsModalRef;
+  message: string;
   assignedRoles: any;
   availableRoles: any;
   effectiveRoles: any;
@@ -63,7 +67,8 @@ export class AppComponent {
   constructor(private keycloakHttp: KeycloakHttp,
     private _fb: FormBuilder,
     private xlsxToJsonService: XlsxToJsonService,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,
+    private modalService: BsModalService) {
   }
 
   ngOnInit() {
@@ -186,11 +191,30 @@ export class AppComponent {
           error => {
             console.log(error);
             this.toastr.error(JSON.parse(error._body).errorMessage);
+            this.getuser(userData.username);
           }
         );
     }
   }
 
+  getuser(username?: any): void {
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users?username=' + username;
+    this.keycloakHttp.get(url)
+      .map(response => response.json())
+      .subscribe(
+        result => {
+          console.log(result);
+          const id = result[0].id;
+          const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + id;
+          this.credentials['value'] = 'welcome1';
+          this.setPassword(url);
+        },
+        error => {
+          console.log(error);
+          this.toastr.error(JSON.parse(error._body).errorMessage);
+        }
+      );
+  }
   setPassword(api?: any) {
     const url = api + '/reset-password';
     this.keycloakHttp.put(url, this.credentials)
@@ -204,12 +228,18 @@ export class AppComponent {
         }
       );
   }
-  deleteUser(data) {
-    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id;
+
+  openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template, {class: 'modal-md'});
+  }
+ 
+  confirm(): void {
+    this.modalRef.hide();
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + this.deletedUser.id;
     this.keycloakHttp.delete(url)
       .subscribe(
         result => {
-          this.toastr.success(data.username + ' user is deleted successfully.');
+          this.toastr.success(this.deletedUser.username + ' user is deleted successfully.');
           this.getUsersFromApi();
         },
         error => {
@@ -217,6 +247,15 @@ export class AppComponent {
           this.toastr.error(JSON.parse(error._body).errorMessage);
         }
       );
+  }
+ 
+  decline(): void {
+    this.modalRef.hide();
+  }
+
+  deleteUser(data, template) {
+    this.openModal(template);
+    this.deletedUser = data;
   }
 
   editUser(data?: any, query?: any) {
@@ -309,6 +348,7 @@ export class AppComponent {
     this.filename = '';
     this.result = [];
     this.results = [];
+    this.credentials['value'] = 'welcome1';
   }
 
   handleFile(event) {
@@ -486,12 +526,17 @@ export class AppComponent {
     this.isRoleEditable = true;
     this.createRoleForm.get('name').disable();
   }
-  deleteRole(role) {
-    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/roles-by-id/' + role.id;
+  deleteRole(role, template) {
+     this.openModal(template);
+    this.deletedRole = role;
+  }
+  confirmDeleteRole(): void {
+    this.modalRef.hide();
+    const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/roles-by-id/' + this.deletedRole.id;
     this.keycloakHttp.delete(url)
       .subscribe(
         result => {
-          this.toastr.success(role.name + ' role is deleted successfully.');
+          this.toastr.success(this.deletedRole.name + ' role is deleted successfully.');
           this.getAllRoles();
         },
         error => {
@@ -500,7 +545,7 @@ export class AppComponent {
         }
       );
   }
-
+ 
   // Search the all user functions
 
   searchRecords(query) {

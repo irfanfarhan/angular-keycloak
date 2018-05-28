@@ -130,7 +130,7 @@
                                         <button type="button" (click)="grantAccess(user)" class="btn btn-success btn-xs">
                                                 <i class="fa fa-universal-access" aria-hidden="true"></i>
                                              </button>
-                                        <button type="button" (click)="deleteUser(user)" class="btn btn-danger btn-xs">
+                                        <button type="button" (click)="deleteUser(user, template)" class="btn btn-danger btn-xs">
                                                  <span class="glyphicon glyphicon-trash"></span>
                                              </button>
                                     </td>
@@ -187,7 +187,7 @@
                                         <button type="button" class="btn btn-success btn-xs" (click)="editRole(role)">
                                                     <span class="glyphicon glyphicon-pencil"></span>
                                                 </button>
-                                        <button type="button" (click)="deleteRole(role)" class="btn btn-danger btn-xs">
+                                        <button type="button" (click)="deleteRole(role, Roletemplate)" class="btn btn-danger btn-xs">
                                                      <span class="glyphicon glyphicon-trash"></span>
                                                  </button>
                                     </td>
@@ -385,3 +385,32 @@
         </section>
     </div>
 </ng-sidebar-container>
+
+<ng-template #template>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Delete User</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+    </div>
+    <div class="modal-body text-center">
+        <p>Are you sure you want to permanently delete the user {{deletedUser.id}}?</p>
+        <br>
+        <button type="button" class="btn btn-default" (click)="decline()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirm()">Delete</button>
+    </div>
+</ng-template>
+<ng-template #Roletemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Delete Role</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+    </div>
+    <div class="modal-body text-center">
+        <p>Are you sure you want to permanently delete the role {{deletedRole.name}}?</p>
+        <br>
+        <button type="button" class="btn btn-default" (click)="decline()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmDeleteRole()">Delete</button>
+    </div>
+</ng-template>
