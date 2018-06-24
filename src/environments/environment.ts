@@ -1,4 +1,5 @@
 export const environment = {
 	production: false,
-	keycloakRootUrl: 'http://localhost:8080/auth'
+	keycloakRootUrl: 'http://localhost:8080/auth',
+	role: 'vendor'
 };

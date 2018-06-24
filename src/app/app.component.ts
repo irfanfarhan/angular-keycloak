@@ -297,17 +297,42 @@ export class AppComponent {
       .map(response => response.json())
       .subscribe(
         result => {
-          console.log(result);
           if (value === 'composite') {
             this.effectiveRoles = result;
           }
           if (value === 'available') {
             this.availableRoles = result;
+            this.assignDefaultRole(this.availableRoles);
           }
         },
         error => console.log(error)
       );
   }
+  assignDefaultRole(availableRoles) {
+    console.log(availableRoles);
+    for (let role of availableRoles) {
+      if (role) {
+        const roleArray = [];
+        if (role.name === environment.role) {
+          roleArray.push(role);
+          const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + this.userData.id + '/role-mappings/realm';
+          this.keycloakHttp.post(url, roleArray)
+            .subscribe(
+              result => {
+                this.getAssignedRoles(this.userData);
+                this.getRolesMapping(this.userData, 'composite');
+                this.getRolesMapping(this.userData, 'available');
+              },
+              error => {
+                console.log(error);
+                this.toastr.error(JSON.parse(error._body).errorMessage);
+              }
+            );
+        }
+      }
+    }
+  }
+
   getAssignedRoles(data, ) {
     const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + data.id + '/role-mappings/realm';
     this.keycloakHttp.get(url)
@@ -487,7 +512,7 @@ export class AppComponent {
       console.log(this.assignedRoleAdded);
     }
   }
-  addItem(element: any, assignedList) {
+  addItem(element: any, assignedList, checkStatus: boolean = false) {
     const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + this.userData.id + '/role-mappings/realm';
     this.keycloakHttp.post(url, this.availableRoleAdded)
       .subscribe(
