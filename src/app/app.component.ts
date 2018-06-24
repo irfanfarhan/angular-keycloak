@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AnimationTransitionEvent, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AnimationTransitionEvent, TemplateRef, HostListener } from '@angular/core';
 import { KeycloakService } from './keycloak/keycloak.service';
 import { KeycloakHttp } from './keycloak/keycloak.http';
 import { environment } from '../environments/environment';
@@ -18,6 +18,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  files: any;
   deletedRole: any;
   deletedUser: any;
   modalRef: BsModalRef;
@@ -64,6 +65,7 @@ export class AppComponent {
   assignedRoleAdded: any[] = [];
   @ViewChild('typesElement') typesElement: ElementRef;
   @ViewChild('typesElAssigned') typesElAssigned: ElementRef;
+  dragAreaClass: string = 'dragarea';
   constructor(private keycloakHttp: KeycloakHttp,
     private _fb: FormBuilder,
     private xlsxToJsonService: XlsxToJsonService,
@@ -230,9 +232,9 @@ export class AppComponent {
   }
 
   openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template, {class: 'modal-md'});
+    this.modalRef = this.modalService.show(template, { class: 'modal-md' });
   }
- 
+
   confirm(): void {
     this.modalRef.hide();
     const url = environment.keycloakRootUrl + '/admin/realms/' + this.realm + '/users/' + this.deletedUser.id;
@@ -248,7 +250,7 @@ export class AppComponent {
         }
       );
   }
- 
+
   decline(): void {
     this.modalRef.hide();
   }
@@ -376,6 +378,11 @@ export class AppComponent {
     });
   }
 
+  resetComment() {
+    this.filename = '';
+    this.result = '';
+    this.results = '';
+  }
   addMultipleUsers(data) {
     if (data) {
       for (const key of this.result) {
@@ -385,6 +392,49 @@ export class AppComponent {
       }
     }
   }
+
+  @HostListener('dragover', ['$event']) onDragOver(event) {
+    this.dragAreaClass = 'droparea';
+    event.preventDefault();
+  }
+
+  @HostListener('dragenter', ['$event']) onDragEnter(event) {
+    this.dragAreaClass = 'droparea';
+    event.preventDefault();
+  }
+
+  @HostListener('dragend', ['$event']) onDragEnd(event) {
+    this.dragAreaClass = 'dragarea';
+    event.preventDefault();
+  }
+
+  @HostListener('dragleave', ['$event']) onDragLeave(event) {
+    this.dragAreaClass = 'dragarea';
+    event.preventDefault();
+  }
+
+  @HostListener('drop', ['$event']) onDrop(event) {
+    this.dragAreaClass = 'dragarea';
+    event.preventDefault();
+    event.stopPropagation();
+    this.filename = '';
+    const files: FileList = event.dataTransfer.files;
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      if (files.length === 1) {
+        this.filename += files[i].name;
+        this.filename = this.filename.replace(/\\/g, '/').replace(/.*\//, '').substring(0, 25);
+      } else {
+        this.filename = files.length + ' Files Selected';
+      }
+    }
+    const file = event.dataTransfer.files[0];
+    this.xlsxToJsonService.processFileToJson([], file).subscribe(data => {
+      this.result = data['sheets'].Sheet1;
+      this.results = JSON.stringify(this.result);
+    });
+  }
+
   // Open Roles Tab and Get all roles function 
 
   getAllRoles(): void {
@@ -527,7 +577,7 @@ export class AppComponent {
     this.createRoleForm.get('name').disable();
   }
   deleteRole(role, template) {
-     this.openModal(template);
+    this.openModal(template);
     this.deletedRole = role;
   }
   confirmDeleteRole(): void {
@@ -545,7 +595,7 @@ export class AppComponent {
         }
       );
   }
- 
+
   // Search the all user functions
 
   searchRecords(query) {

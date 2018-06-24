@@ -145,136 +145,35 @@
     }
     .demo-contents {
         padding: 2em;
-        .file_upload {
-            padding: 0px;
-            .choose_file {
-                border: 1px solid grey;
-                padding: 0px;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                overflow: hidden;
+        code {
+            height: 200px;
+            display: block;
+            overflow-y: auto;
+        }
+        .dragarea {
+            font-size: 12px;
+            border: 3px dashed #bbb;
+            padding: 20px;
+            background-color: #fff;
+            color: #000;
+            i {
+                display: block;
+                font-size: 50px;
+                padding-bottom: 20px;
+                color: gray
             }
-            .choose_button {
-                input[type="file"] {
-                    display: none;
-                }
-                &:active {
-                    &:hover input[type="file"],
-                    &:focus input[type="file"] {
-                        display: none;
-                    }
-                }
-            }
-            .file_name {
-                font-weight: normal;
-            }
-            .upload_button {
-                padding: 1px 4px;
-                position: relative;
-                left: 2px;
-                top: 5px;
-                cursor: pointer;
-            }
-            .choose_button {
-                width: 100%;
-                height: 32px;
-                line-height: 20px;
-                max-width: 120px;
-                outline: none;
-                &:active,
-                &:hover,
-                &:focus {
-                    width: 100%;
-                    height: 32px;
-                    line-height: 20px;
-                    max-width: 120px;
-                    outline: none;
-                }
-                &:active {
-                    &:hover,
-                    &:focus {
-                        width: 100%;
-                        height: 32px;
-                        line-height: 20px;
-                        max-width: 120px;
-                        outline: none;
-                    }
-                }
-                &.btn {
-                    width: 100%;
-                    height: 32px;
-                    line-height: 20px;
-                    max-width: 120px;
-                    border: none;
-                    background: grey;
-                    color: #000000;
-                    font-size: 14px;
-                    outline: none;
-                    border-radius: 0;
-                    &:active,
-                    &:hover,
-                    &:focus,
-                    &:disabled {
-                        width: 100%;
-                        height: 32px;
-                        line-height: 20px;
-                        max-width: 120px;
-                        border: none;
-                        background: grey;
-                        color: #000000;
-                        font-size: 14px;
-                        outline: none;
-                        border-radius: 0;
-                    }
-                }
-            }
-            .btn.choose_button:disabled {
-                &:active,
-                &:hover,
-                &:focus {
-                    width: 100%;
-                    height: 32px;
-                    line-height: 20px;
-                    max-width: 120px;
-                    border: none;
-                    background: grey;
-                    color: #000000;
-                    font-size: 14px;
-                    outline: none;
-                    border-radius: 0;
-                }
-            }
-            .choose_button.btn {
-                &:active,
-                &:hover {
-                    transition-duration: 0.4s;
-                    outline: none;
-                }
-            }
-            .btn.choose_button:hover:disabled:active:focus {
-                transition-duration: 0.4s;
-                outline: none;
-            }
-            .choose_button.btn {
-                &:focus {
-                    transition-duration: 0.4s;
-                    outline: none;
-                    &:active:hover {
-                        transition-duration: 0.4s;
-                        outline: none;
-                    }
-                }
-                &:active {
-                    &:hover,
-                    &:focus {
-                        transition-duration: 0.4s;
-                        outline: none;
-                    }
-                }
-                &:disabled {
-                    cursor: not-allowed;
-                    outline: none;
-                }
+        }
+        .droparea {
+            font-size: 12px;
+            border: 3px dashed #4CAF50;
+            padding: 20px;
+            background-color: #fff;
+            color: #000;
+            i {
+                display: block;
+                font-size: 50px;
+                padding-bottom: 20px;
+                color: #4CAF50;
             }
         }
         .list-group-item {
